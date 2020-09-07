@@ -8,4 +8,4 @@ module.exports = app;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api", require("./routes")); // include our routes!
+app.use("/api", require("./routes/api")); // include our routes!
