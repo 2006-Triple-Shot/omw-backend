@@ -6,6 +6,7 @@
   "scripts": {
     "start-server": "nodemon server.js",
     "seed": "node db/seed.js",
+    "demo": "node db/demo.js",
     "start-seed": "npm run start-server & npm run seed"
   },
   "author": "\"esyeng, mcherry\"",

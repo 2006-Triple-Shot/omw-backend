@@ -1,6 +1,6 @@
 const events = require("express").Router();
 const models = require("../../db/models");
-const db = require("../../db/db");
+// const db = require("../../db/db");
 const { User, Event } = models;
 
 /* TEST GET events ************************** */

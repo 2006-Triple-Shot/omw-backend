@@ -1,8 +1,6 @@
-const db = require("./db");
 ("use strict");
+const db = require("./db");
 const Sequelize = require("sequelize");
-// const User = require("./models/User");
-// const Event = require("./models/Event");
 const { User, Event } = require("./models");
 const faker = require("faker");
 
