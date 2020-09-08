@@ -15,12 +15,14 @@ events.get("/testget", async (req, res, next) => {
 /* GET ALL EVENTS ************************** */
 events.get("/", async (req, res, next) => {
   try {
-    const allEvents = await Event.findAll({
-      include: {
-        model: User,
-        as: "guest",
-      },
-    });
+    const allEvents = await Event.findAll();
+    // ({
+    //   include: {
+    //     model: User,
+    //     as: "guest",
+    //   },
+    // }
+    // );
     res.json(allEvents);
   } catch (err) {
     next(err);

@@ -12,12 +12,18 @@
   "license": "MIT",
   "dependencies": {
     "chalk": "4.1.0",
+    "crypto": "1.0.1",
     "express": "4.17.1",
+    "express-session": "1.17.1",
     "faker": "5.1.0",
-    "morgan": "1.10.0",
     "nodemon": "2.0.4",
+    "passport": "0.4.1",
+    "path": "0.12.7",
     "pg": "8.3.3",
     "sequelize": "5.3.1",
     "socket.io": "2.3.0"
+  },
+  "devDependencies": {
+    "morgan": "1.10.0"
   }
 }

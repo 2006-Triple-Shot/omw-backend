@@ -1,7 +1,6 @@
 const users = require("express").Router();
-const models = require("../../db/models");
+const { User, Event } = require("../../db/models/index");
 const db = require("../../db/db");
-const { User, Event } = models;
 
 /* TEST GET USERS ************************** */
 users.get("/testget", async (req, res, next) => {
@@ -23,59 +22,93 @@ users.get("/", async (req, res, next) => {
 });
 
 /* GET SINGLE USER ************************** */
-users.get("/id/:userId/", async (req, res, next) => {
-  try {
-    const user = await User.findByPk(req.params.userId);
-    res.json(user);
-  } catch (err) {
-    next(err);
-  }
-});
 users.get("/:param", async (req, res, next) => {
   console.log(req.params.param);
   try {
     let id;
     let user;
     const param = req.params.param;
-    const userByName = await User.findOne({
-      where: {
-        firstName: param,
-      },
-    });
-    if (userByName) {
-      user = userByName;
-      id = user.dataValues.id;
+    if (typeof param === "number") {
+      try {
+        const userPk = await User.findByPk(param);
+        res.json(userPk);
+      } catch (err) {
+        next(err);
+      }
     } else {
-      const userByEmail = await User.findOne({
-        where: {
-          email: param,
-        },
-      });
-      if (userByEmail) {
-        user = userByEmail;
-        id = user.dataValues.id;
+      try {
+        const userByName = await User.findOne({
+          where: {
+            firstName: param,
+          },
+        });
+        if (userByName) {
+          user = userByName;
+          id = user.dataValues.id;
+          res.status(200).json({ userId: id });
+        } else {
+          const userByEmail = await User.findOne({
+            where: {
+              email: param,
+            },
+          });
+          if (userByEmail) {
+            user = userByEmail;
+            id = user.dataValues.id;
+            res.status(200).json({ userId: id });
+          }
+        }
+      } catch (err) {
+        next(err);
       }
     }
-    console.log(user, id);
-    res.status(200).json({ userId: id });
-  } catch (err) {
-    next(err);
-  }
-});
-/* GET CONTACTS ************************** */
-users.get("/:userId/contacts", async (req, res, next) => {
-  try {
-    const user = await User.findByPk(req.params.userId);
-    res.json(user);
   } catch (err) {
     next(err);
   }
 });
 
-/* POST USER ************************** */
+/* GET CONTACTS ************************** */
+// users.get("/id/:userId/contacts", async (req, res, next) => {
+//   try {
+//     const user = await User.findAll({
+//       include: {
+//         model: User,
+//         through: "contacts",
+//         as: "contact",
+//         where: {
+//           contactId: req.params.userId,
+//         },
+//       },
+//     });
+//     res.json(user);
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+
+/* CREATE USER ************************** */
 users.post("/", async (req, res, next) => {
   try {
-    const newUser = await User.create(req.body);
+    const {
+      firstName,
+      lastName,
+      mobile,
+      email,
+      password,
+      zip,
+      latitude,
+      longitude,
+    } = req.body;
+    const newUser = await User.create({
+      firstName: firstName,
+      lastName: lastName,
+      latitude: latitude,
+      longitude: longitude,
+      mobile: mobile,
+      password: password,
+      zip: zip,
+      email: email,
+    });
     res.json(newUser);
   } catch (err) {
     next(err);
