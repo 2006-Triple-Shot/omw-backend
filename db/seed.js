@@ -42,22 +42,23 @@ const createEvent = async () => {
   }
 };
 
-const generateData = async () => {
+const generateUsers = async () => {
   const userArray = [];
-  const eventsArray = [];
-  const data = {};
-
   for (let i = 0; i < 20; i++) {
     const newUser = await createUser();
     userArray.push(newUser);
-    if (i % 5 === 0) {
-      const newEvent = await createEvent();
-      eventsArray.push(newEvent);
-    }
   }
-  data.users = userArray;
-  data.events = eventsArray;
-  return data;
+
+  return userArray;
+};
+const generateEvents = async () => {
+  const eventsArray = [];
+
+  for (let i = 0; i < 5; i++) {
+    const newEvent = await createEvent();
+    eventsArray.push(newEvent);
+  }
+  return eventsArray;
 };
 
 const oneEvent = {
@@ -76,9 +77,9 @@ const seed = async () => {
   try {
     await db.sync({ force: true });
     console.log("db synced");
-    const data = await generateData();
-    const users = data.users;
-    const events = data.events;
+
+    const users = await generateUsers();
+    const events = await generateEvents();
     console.log(`seeded ${users.length} users & ${events.length} events`);
     console.log(`seeded successfully`);
   } catch (err) {

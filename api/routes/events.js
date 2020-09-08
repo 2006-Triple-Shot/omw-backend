@@ -1,5 +1,5 @@
 const events = require("express").Router();
-const models = require("../../db/index");
+const models = require("../../db/models/index");
 const { db, User, Event } = models;
 
 /* TEST GET events ************************** */
@@ -19,7 +19,7 @@ events.get("/", async (req, res, next) => {
         model: User,
       },
     });
-    res.json(allevents);
+    res.json(allEvents);
   } catch (err) {
     next(err);
   }

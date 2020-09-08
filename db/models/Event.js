@@ -1,7 +1,8 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
+const User = require("./User");
 
-const Event = db.define("event", {
+const Event = db.define("events", {
   latitude: {
     type: Sequelize.FLOAT,
   },

@@ -14,11 +14,7 @@ users.get("/testget", async (req, res, next) => {
 /* GET ALL USERS ************************** */
 users.get("/", async (req, res, next) => {
   try {
-    const allUsers = await User.findAll({
-      include: {
-        model: Event,
-      },
-    });
+    const allUsers = await User.findAll();
     res.json(allUsers);
   } catch (err) {
     next(err);
@@ -28,14 +24,17 @@ users.get("/", async (req, res, next) => {
 /* GET SINGLE USER ************************** */
 users.get("/:userId", async (req, res, next) => {
   try {
-    const user = await User.findByPk(req.params.userId, {
-      include: {
-        model: Event,
-        where: {
-          guestId: req.params.userId,
-        },
-      },
-    });
+    const user = await User.findByPk(
+      req.params.userId
+      //   ,{
+      //   include: {
+      //     model: Event,
+      //     where: {
+      //       guestId: req.params.userId,
+      //     },
+      //   },
+      // }
+    );
     res.json(user);
   } catch (err) {
     next(err);
