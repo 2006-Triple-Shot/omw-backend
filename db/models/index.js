@@ -2,19 +2,15 @@ const db = require("../db");
 const User = require("./User");
 const Event = require("./Event");
 
-User.hasMany(Event, { foreignKey: "userId" });
-Event.hasMany(User, { as: "guest", foreignKey: "guestId" });
-Event.hasOne(User, { as: "host", foreignKey: "hostId" });
+User.hasMany(Event, { foreignKey: "hostId" }); // event should have user has host
+Event.belongsToMany(User, { through: "trips", as: "guest" });
+User.belongsToMany(Event, { through: "trips", as: "event" });
 
-Event.belongsToMany(User, { through: "Trips", as: "event" });
-User.belongsToMany(User, { through: "Contacts", as: "contact" });
+User.belongsToMany(User, { through: "contacts", as: "contact" });
 
-User.sync({ force: true });
-Event.sync({ force: true });
+// User.hasMany(Event, { foreignKey: "eventId" });
 
-const models = {
-  db: db,
-  User: User,
-  Event: Event,
+module.exports = {
+  User,
+  Event,
 };
-module.exports = models;

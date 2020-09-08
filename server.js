@@ -1,6 +1,7 @@
 const app = require("./api/index");
-const models = require("./db/index");
-const { db, User, Event } = models;
+const models = require("./db/models");
+const { User, Event } = models;
+const db = require("./db/db");
 const http = require("http");
 const server = http.createServer(app);
 const io = require("socket.io").listen(server);

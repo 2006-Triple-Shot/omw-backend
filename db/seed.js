@@ -1,51 +1,46 @@
 const db = require("./db");
 ("use strict");
 const Sequelize = require("sequelize");
-const User = require("./models/User");
-const Event = require("./models/Event");
+// const User = require("./models/User");
+// const Event = require("./models/Event");
+const { User, Event } = require("./models");
 const faker = require("faker");
 
-const createUser = async () => {
-  try {
-    const user = await User.create({
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
-      mobile: `${faker.phone.phoneNumberFormat(10)}`,
-      email: faker.internet.email(),
-      password: faker.internet.password(),
-      imageUrl: faker.image.avatar(),
-      zip: faker.address.zipCode(),
-      latitude: faker.address.latitude(),
-      longitude: faker.address.longitude(),
-      isHost: faker.random.boolean(),
-      isSharing: faker.random.boolean(),
-    });
-    return user;
-  } catch (err) {
-    console.error(err);
-  }
+const createUser = () => {
+  const user = {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    mobile: `${faker.phone.phoneNumberFormat(10)}`,
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    imageUrl: faker.image.avatar(),
+    zip: faker.address.zipCode(),
+    latitude: faker.address.latitude(),
+    longitude: faker.address.longitude(),
+    isHost: faker.random.boolean(),
+    isSharing: faker.random.boolean(),
+  };
+  return user;
 };
 
-const createEvent = async () => {
-  try {
-    const event = await Event.create({
-      latitude: faker.address.latitude(),
-      longitude: faker.address.longitude(),
-      date: faker.date.future(),
-      title: faker.random.word(),
-      description: faker.lorem.paragraph(),
-      status: "Inactive",
-    });
-    return event;
-  } catch (err) {
-    console.error(err);
-  }
+const createEvent = () => {
+  const event = {
+    latitude: faker.address.latitude(),
+    longitude: faker.address.longitude(),
+    date: faker.date.future(),
+    title: faker.random.word(),
+    description: faker.lorem.paragraph(),
+    status: "Inactive",
+  };
+  return event;
 };
 
 const generateUsers = async () => {
   const userArray = [];
   for (let i = 0; i < 20; i++) {
-    const newUser = await createUser();
+    const newUser = createUser();
+    const newUserInstance = await User.create(newUser);
+
     userArray.push(newUser);
   }
 
@@ -55,7 +50,8 @@ const generateEvents = async () => {
   const eventsArray = [];
 
   for (let i = 0; i < 5; i++) {
-    const newEvent = await createEvent();
+    const newEvent = createEvent();
+    const newEventInstance = await Event.create(newEvent);
     eventsArray.push(newEvent);
   }
   return eventsArray;
@@ -77,7 +73,6 @@ const seed = async () => {
   try {
     await db.sync({ force: true });
     console.log("db synced");
-
     const users = await generateUsers();
     const events = await generateEvents();
     console.log(`seeded ${users.length} users & ${events.length} events`);

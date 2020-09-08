@@ -1,6 +1,7 @@
 const events = require("express").Router();
-const models = require("../../db/models/index");
-const { db, User, Event } = models;
+const models = require("../../db/models");
+const db = require("../../db/db");
+const { User, Event } = models;
 
 /* TEST GET events ************************** */
 events.get("/testget", async (req, res, next) => {
@@ -17,6 +18,7 @@ events.get("/", async (req, res, next) => {
     const allEvents = await Event.findAll({
       include: {
         model: User,
+        as: "guest",
       },
     });
     res.json(allEvents);
@@ -25,15 +27,16 @@ events.get("/", async (req, res, next) => {
   }
 });
 
-/* GET SINGLE EVENT ************************** */
+/* GET HOST'S EVENTS ************************** */
 events.get("/:eventId", async (req, res, next) => {
   try {
     const event = await Event.findByPk(req.params.eventId, {
+      where: {
+        id: req.params.eventId,
+      },
       include: {
         model: User,
-        where: {
-          eventId: req.params.eventId,
-        },
+        as: "guest",
       },
     });
     res.json(event);
@@ -45,7 +48,14 @@ events.get("/:eventId", async (req, res, next) => {
 /* POST EVENT ************************** */
 events.post("/", async (req, res, next) => {
   try {
-    const newEvent = await Event.create(req.body);
+    const { latitude, longitude, date, title, description } = req.body;
+    const newEvent = await Event.create({
+      title: title,
+      date: date,
+      latitude: latitude,
+      longitude: longitude,
+      description: description,
+    });
     res.json(newEvent);
   } catch (err) {
     next(err);

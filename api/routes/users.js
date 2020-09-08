@@ -1,5 +1,6 @@
 const users = require("express").Router();
-const models = require("../../db/index");
+const models = require("../../db/models");
+const db = require("../../db/db");
 const { User, Event } = models;
 
 /* TEST GET USERS ************************** */
@@ -24,17 +25,7 @@ users.get("/", async (req, res, next) => {
 /* GET SINGLE USER ************************** */
 users.get("/:userId", async (req, res, next) => {
   try {
-    const user = await User.findByPk(
-      req.params.userId
-      //   ,{
-      //   include: {
-      //     model: Event,
-      //     where: {
-      //       guestId: req.params.userId,
-      //     },
-      //   },
-      // }
-    );
+    const user = await User.findByPk(req.params.userId);
     res.json(user);
   } catch (err) {
     next(err);
