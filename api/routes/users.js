@@ -23,7 +23,7 @@ users.get("/", async (req, res, next) => {
 });
 
 /* GET SINGLE USER ************************** */
-users.get("/:userId", async (req, res, next) => {
+users.get("/id/:userId/", async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.userId);
     res.json(user);
@@ -31,7 +31,37 @@ users.get("/:userId", async (req, res, next) => {
     next(err);
   }
 });
-
+users.get("/:param", async (req, res, next) => {
+  console.log(req.params.param);
+  try {
+    let id;
+    let user;
+    const param = req.params.param;
+    const userByName = await User.findOne({
+      where: {
+        firstName: param,
+      },
+    });
+    if (userByName) {
+      user = userByName;
+      id = user.dataValues.id;
+    } else {
+      const userByEmail = await User.findOne({
+        where: {
+          email: param,
+        },
+      });
+      if (userByEmail) {
+        user = userByEmail;
+        id = user.dataValues.id;
+      }
+    }
+    console.log(user, id);
+    res.status(200).json({ userId: id });
+  } catch (err) {
+    next(err);
+  }
+});
 /* GET CONTACTS ************************** */
 users.get("/:userId/contacts", async (req, res, next) => {
   try {
