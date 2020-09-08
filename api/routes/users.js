@@ -22,18 +22,6 @@ users.get("/", async (req, res, next) => {
 });
 
 /* GET SINGLE USER ************************** */
-users.use("/id", (req, res) => {
-  users.get("/id/:userId", async (req, res, next) => {
-    try {
-      const user = await User.findByPk(req.params.userId);
-      res.json(user);
-    } catch (err) {
-      next(err);
-    }
-  });
-});
-
-/* GET SINGLE USER ************************** */
 users.get("/:param", async (req, res, next) => {
   console.log(req.params.param);
   try {
