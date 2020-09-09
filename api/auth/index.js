@@ -20,9 +20,8 @@ auth.post("/login", async (req, res, next) => {
     } else if (user) {
       const passwordCorrect = user.correctPassword(password);
       if (passwordCorrect) {
-        const token = jwt.sign(user.email, secret.publicSecret, {
-          expiresIn: 43200000,
-        });
+        console.log(secret.publicSecret);
+        const token = jwt.sign(user.email, secret.publicSecret);
         return res.json({ token: token });
       } else {
         console.log("Incorrect password for user:", req.body.email);
