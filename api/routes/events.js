@@ -1,6 +1,5 @@
 const events = require("express").Router();
 const models = require("../../db/models");
-// const db = require("../../db/db");
 const { User, Event } = models;
 
 /* TEST GET events ************************** */
@@ -16,13 +15,6 @@ events.get("/testget", async (req, res, next) => {
 events.get("/", async (req, res, next) => {
   try {
     const allEvents = await Event.findAll();
-    // ({
-    //   include: {
-    //     model: User,
-    //     as: "guest",
-    //   },
-    // }
-    // );
     res.json(allEvents);
   } catch (err) {
     next(err);

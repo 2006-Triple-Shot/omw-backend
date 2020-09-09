@@ -10,17 +10,19 @@ const PORT = process.env.PORT || 5000;
 
 module.exports = app;
 
+if (process.env.NODE_ENV !== "production") require("./token");
+
 /* MIDDLEWARES ****************** */
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* AUTHENTICATION MIDDLEWARE ****************** */
-app.use("/auth", require("./auth/auth"));
+app.use("/auth", require("./api/index"));
 app.use("*", authorize);
 
 /* ROUTES ****************** */
-app.use("/api", require("./api/demoapi")); // include our routes!
+app.use("/api", require("./api/routes/api")); // include our routes!
 
 /* SOCKETS ****************** */
 let guestSocket = null;
