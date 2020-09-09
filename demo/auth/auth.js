@@ -4,7 +4,11 @@ const auth = require("express").Router();
 const { demoUser } = require("../models/demoModIndex");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const omwApiToken = require("../../token");
+if (process.env.NODE_ENV === "production") {
+  const omwApiToken = process.env.TOKENKEY;
+} else {
+  const omwApiToken = require("../../token");
+}
 module.exports = auth;
 
 /* LOGIN ************************** */

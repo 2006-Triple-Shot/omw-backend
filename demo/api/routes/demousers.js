@@ -1,7 +1,6 @@
 const users = require("express").Router();
 const { demoUser } = require("../../models/demoModIndex");
 const ddb = require("../../ddb");
-const e = require("express");
 
 // const { User, Event } = require("../../db/models/index");
 // const db = require("../../db/db");

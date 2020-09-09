@@ -3,8 +3,12 @@ const auth = require("express").Router();
 const { User } = require("../../db/models/index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const omwApiToken = require("../../token");
-const { TIME } = require("sequelize/types");
+if (process.env.NODE_ENV === "production") {
+  const omwApiToken = process.env.TOKENKEY;
+} else {
+  const omwApiToken = require("../../token");
+}
+
 module.exports = auth;
 
 /* LOGIN ************************** */

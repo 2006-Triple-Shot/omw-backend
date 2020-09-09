@@ -1,5 +1,9 @@
 const jwt = require("jsonwebtoken");
-const omwApiToken = require("../../token");
+if (process.env.NODE_ENV === "production") {
+  const omwApiToken = process.env.TOKENKEY;
+} else {
+  const omwApiToken = require("../../token");
+}
 
 module.exports = (req, res, next) => {
   const authHeader = req.get("Authorization");
