@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const http = require("http");
 const server = http.createServer(app);
 const io = require("socket.io").listen(server);
-const PORT = process.env.PORT || 5000;
+const PORT = 8080;
 
 module.exports = app;
 

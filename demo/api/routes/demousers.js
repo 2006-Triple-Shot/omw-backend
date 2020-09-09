@@ -1,6 +1,8 @@
 const users = require("express").Router();
 const { demoUser } = require("../../models/demoModIndex");
 const ddb = require("../../ddb");
+const e = require("express");
+
 // const { User, Event } = require("../../db/models/index");
 // const db = require("../../db/db");
 
@@ -33,16 +35,28 @@ users.get("/", async (req, res, next) => {
 });
 
 /* GET SINGLE USER ************************** */
+// This route will either find By Primary Key or use custom parameters: email, or firstName
+const isNum = (input) => {
+  if (!isNaN(input)) return true;
+  else return false;
+};
+
 users.get("/:param", async (req, res, next) => {
-  console.log(req.params.param);
   try {
     let id;
     let user;
     const param = req.params.param;
-    if (typeof param === "number") {
+    if (isNum(param)) {
       try {
         const userPk = await demoUser.findByPk(param);
-        res.json(userPk);
+        res.status(200).json({
+          id: userPk.dataValues.id,
+          firstName: userPk.dataValues.firstName,
+          email: userPk.dataValues.email,
+          latitude: userPk.dataValues.latitude,
+          longitude: userPk.dataValues.longitude,
+          imageUrl: userPk.dataValues.imageUrl,
+        });
       } catch (err) {
         next(err);
       }
