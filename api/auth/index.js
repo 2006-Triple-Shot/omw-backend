@@ -21,7 +21,7 @@ auth.post("/login", async (req, res, next) => {
       const passwordCorrect = user.correctPassword(password);
       if (passwordCorrect) {
         const token = jwt.sign(user.email, secret.publicSecret, {
-          expiresIn: "1d",
+          expiresIn: "24h",
         });
         return res.json({ token: token });
       } else {
