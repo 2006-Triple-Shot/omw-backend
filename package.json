@@ -3,13 +3,17 @@
   "version": "1.0.0",
   "description": "\"server and db for omw\"",
   "main": "server.js",
+  "engines": {
+    "node": "12.16.3"
+  },
   "scripts": {
     "start-server": "nodemon server.js",
     "seed": "node db/seed.js",
     "start-seed": "npm run start-server & npm run seed",
     "demo-seed": "node demo/demoseed.js",
     "demo-server": "nodemon demo/demoserver.js",
-    "demo-start-seed": "npm run demo-server & npm run demo-seed"
+    "demo-start-seed": "npm run demo-server & npm run demo-seed",
+    "deploy": "production/script/deploy"
   },
   "author": "\"esyeng, mcherry\"",
   "license": "MIT",
