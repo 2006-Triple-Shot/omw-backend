@@ -1,7 +1,7 @@
 "use strict";
 const auth = require("express").Router();
 // const { User } = require("../../db/models/index");
-const { demoUser } = require("../models/demoUser");
+const { demoUser } = require("../models/demoModIndex");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { omwApiToken } = require("../../token");
