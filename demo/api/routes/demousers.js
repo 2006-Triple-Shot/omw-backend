@@ -1,14 +1,15 @@
 const users = require("express").Router();
-const { demoUser } = require("../../models/demoModIndex");
+const { demoUser, demoEvent } = require("../../models/demoModIndex");
 const ddb = require("../../ddb");
 
 // const { User, Event } = require("../../db/models/index");
 // const db = require("../../db/db");
 
 /* TEST GET USERS ************************** */
-users.get("/testget", async (req, res, next) => {
+users.get("/test/events", async (req, res, next) => {
   try {
-    res.send("TEST GET user router");
+    const event = await demoEvent.findAll();
+    res.status(200).json(event);
   } catch (err) {
     next(err);
   }
