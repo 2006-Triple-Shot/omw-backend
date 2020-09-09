@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* AUTHENTICATION MIDDLEWARE ****************** */
-app.use("/web", require("../public/router"));
+// app.use("/web", require("../public/router"));
 app.use("/auth", require("./auth/auth"));
 app.use("*", authorize);
 
