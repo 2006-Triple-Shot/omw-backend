@@ -3,10 +3,11 @@ const auth = require("express").Router();
 const { User } = require("../../db/models/index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+let omwApiToken;
 if (process.env.NODE_ENV === "production") {
-  const omwApiToken = process.env.TOKENKEY;
+  omwApiToken = process.env.TOKENKEY;
 } else {
-  const omwApiToken = require("../../token");
+  omwApiToken = require("../../token");
 }
 
 module.exports = auth;
