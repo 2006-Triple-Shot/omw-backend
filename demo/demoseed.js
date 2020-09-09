@@ -3,6 +3,7 @@ const pg = require("pg");
 const Sequelize = require("sequelize");
 const ddb = require("./ddb");
 const { demoUser, demoEvent } = require("./models/demoModIndex");
+const setAndSaltPassword = require("./models/demoUser");
 
 const users = [
   {
@@ -81,7 +82,7 @@ const seed = async () => {
     await ddb.sync({ force: true });
     console.log("demo db synced");
     const friends = users.map(async (user) => {
-      await demoUser.create(user);
+      const newUser = await demoUser.create(user);
     });
     const event = await demoEvent.create(launchDay);
 

@@ -4,6 +4,7 @@ const path = require("path");
 const morgan = require("morgan");
 const http = require("http");
 const server = http.createServer(app);
+const authorize = require("./auth/authorize");
 const io = require("socket.io").listen(server);
 const PORT = 8080;
 
@@ -14,12 +15,12 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* AUTHENTICATION ****************** */
+/* AUTHENTICATION MIDDLEWARE ****************** */
+app.use("/auth", require("./auth/auth"));
+app.use("*", authorize);
 
 /* ROUTES ****************** */
-
 app.use("/api", require("./api/demoapi")); // include our routes!
-app.use("/auth", require("./auth/auth"));
 
 /* SOCKETS ****************** */
 let guestSocket = null;

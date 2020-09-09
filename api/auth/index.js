@@ -3,7 +3,7 @@ const auth = require("express").Router();
 const { User } = require("../../db/models/index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { omwApiToken } = require("../../token");
+const omwApiToken = require("../../token");
 module.exports = auth;
 
 /* LOGIN ************************** */

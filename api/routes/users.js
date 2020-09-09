@@ -31,13 +31,18 @@ users.get("/", async (req, res, next) => {
 });
 
 /* GET SINGLE USER ************************** */
+
+const isNum = (input) => {
+  if (!isNaN(input)) return true;
+  else return false;
+};
+
 users.get("/:param", async (req, res, next) => {
-  console.log(req.params.param);
   try {
     let id;
     let user;
     const param = req.params.param;
-    if (typeof param === "number") {
+    if (isNum(param)) {
       try {
         const userPk = await User.findByPk(param);
         res.json(userPk);

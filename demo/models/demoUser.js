@@ -1,7 +1,8 @@
 const Sequelize = require("sequelize");
-const ddb = require("../ddb");
+const db = require("../ddb");
+const crypto = require("crypto");
 
-const demoUser = ddb.define("user", {
+const demoUser = db.define("users", {
   firstName: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -27,6 +28,15 @@ const demoUser = ddb.define("user", {
   },
   password: {
     type: Sequelize.STRING,
+    get() {
+      return () => this.getDataValue("password");
+    },
+  },
+  salt: {
+    type: Sequelize.STRING,
+    get() {
+      return () => this.getDataValue("salt");
+    },
   },
   imageUrl: {
     type: Sequelize.TEXT,
@@ -52,3 +62,43 @@ const demoUser = ddb.define("user", {
 });
 
 module.exports = demoUser;
+
+/**
+ * instanceMethods
+ */
+demoUser.prototype.correctPassword = function (candidatePwd) {
+  return (
+    demoUser.encryptPassword(candidatePwd, this.salt()) === this.password()
+  );
+};
+
+/**
+ * classMethods
+ */
+demoUser.generateSalt = function () {
+  return crypto.randomBytes(16).toString("base64");
+};
+
+demoUser.encryptPassword = function (plainText, salt) {
+  return crypto
+    .createHash("RSA-SHA256")
+    .update(plainText)
+    .update(salt)
+    .digest("hex");
+};
+
+/**
+ * hooks
+ */
+const setSaltAndPassword = (user) => {
+  if (user.changed("password")) {
+    user.salt = demoUser.generateSalt();
+    user.password = demoUser.encryptPassword(user.password(), user.salt());
+  }
+};
+
+demoUser.beforeCreate(setSaltAndPassword);
+demoUser.beforeUpdate(setSaltAndPassword);
+demoUser.beforeBulkCreate((users) => {
+  users.forEach(setSaltAndPassword);
+});

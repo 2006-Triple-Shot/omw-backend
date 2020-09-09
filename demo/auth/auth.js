@@ -4,26 +4,26 @@ const auth = require("express").Router();
 const { demoUser } = require("../models/demoModIndex");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { omwApiToken } = require("../../token");
+const omwApiToken = require("../../token");
 module.exports = auth;
 
 /* LOGIN ************************** */
 auth.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
+    console.log(email);
     const user = await demoUser.findOne({ where: { email: email } });
     if (!user) {
       console.log("No such user found:", req.body.email);
-      res.status(401).send("Wrong username and/or password");
+      res.status(401).send("Wrong email and/or password");
     } else if (user) {
-      const checkPassword = await bcrypt.compare(password, user.password);
-      if (checkPassword) {
+      const passwordCorrect = user.correctPassword(password);
+      if (passwordCorrect) {
         const token = jwt.sign(user.email, omwApiToken);
-        return res.json(token);
+        return res.json({ token: token });
       } else {
         console.log("Incorrect password for user:", req.body.email);
-        res.status(401).send("Wrong username and/or password");
+        res.status(401).send("incorrect password");
       }
     } else {
       // req.login(user, (err) => (err ? next(err) : res.json(user)));
@@ -46,24 +46,20 @@ auth.post("/signup", async (req, res, next) => {
       latitude,
       longitude,
     } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 12);
+
     const newUser = await demoUser.create({
-      firstName: firstName,
-      lastName: lastName,
-      latitude: latitude,
-      longitude: longitude,
-      mobile: mobile,
-      password: hashedPassword,
-      zip: zip,
-      email: email,
+      firstName,
+      lastName,
+      email,
+      password,
     });
 
     const { id } = newUser;
     const newUserDetails = {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      id: id,
+      firstName,
+      lastName,
+      email,
+      id,
     };
     res.json(newUserDetails);
   } catch (err) {
