@@ -2,7 +2,7 @@
 const pg = require("pg");
 const Sequelize = require("sequelize");
 const ddb = require("./ddb");
-const { demoUser, demoEvent } = require("./models/Demo");
+const { demoUser, demoEvent } = require("./models/demoModIndex");
 
 const users = [
   {

@@ -1,6 +1,7 @@
 "use strict";
 const auth = require("express").Router();
-const { User } = require("../../db/models/index");
+// const { User } = require("../../db/models/index");
+const { demoUser } = require("../models/demoUser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { omwApiToken } = require("../../token");
@@ -11,7 +12,7 @@ auth.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ where: { email: email } });
+    const user = await demoUser.findOne({ where: { email: email } });
     if (!user) {
       console.log("No such user found:", req.body.email);
       res.status(401).send("Wrong username and/or password");
@@ -46,7 +47,7 @@ auth.post("/signup", async (req, res, next) => {
       longitude,
     } = req.body;
     const hashedPassword = await bcrypt.hash(password, 12);
-    const newUser = await User.create({
+    const newUser = await demoUser.create({
       firstName: firstName,
       lastName: lastName,
       latitude: latitude,

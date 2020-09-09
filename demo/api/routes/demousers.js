@@ -1,6 +1,8 @@
 const users = require("express").Router();
-const { User, Event } = require("../../db/models/index");
-const db = require("../../db/db");
+const { demoUser, demoEvent } = require("../../models/demoUser");
+const ddb = require("../../ddb");
+// const { User, Event } = require("../../db/models/index");
+// const db = require("../../db/db");
 
 /* TEST GET USERS ************************** */
 users.get("/testget", async (req, res, next) => {
@@ -14,7 +16,7 @@ users.get("/testget", async (req, res, next) => {
 /* GET ALL USERS ************************** */
 users.get("/", async (req, res, next) => {
   try {
-    const allUsers = await User.findAll();
+    const allUsers = await demoUser.findAll();
     const details = allUsers.map((user) => {
       return {
         id: user.id,
@@ -39,14 +41,14 @@ users.get("/:param", async (req, res, next) => {
     const param = req.params.param;
     if (typeof param === "number") {
       try {
-        const userPk = await User.findByPk(param);
+        const userPk = await demoUser.findByPk(param);
         res.json(userPk);
       } catch (err) {
         next(err);
       }
     } else {
       try {
-        const userByName = await User.findOne({
+        const userByName = await demoUser.findOne({
           where: {
             firstName: param,
           },
@@ -56,7 +58,7 @@ users.get("/:param", async (req, res, next) => {
           id = user.dataValues.id;
           res.status(200).json({ userId: id });
         } else {
-          const userByEmail = await User.findOne({
+          const userByEmail = await demoUser.findOne({
             where: {
               email: param,
             },
@@ -108,7 +110,7 @@ users.post("/", async (req, res, next) => {
       latitude,
       longitude,
     } = req.body;
-    const newUser = await User.create({
+    const newUser = await demoUser.create({
       firstName: firstName,
       lastName: lastName,
       latitude: latitude,

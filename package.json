@@ -6,17 +6,21 @@
   "scripts": {
     "start-server": "nodemon server.js",
     "seed": "node db/seed.js",
-    "demo": "node db/demo.js",
-    "start-seed": "npm run start-server & npm run seed"
+    "start-seed": "npm run start-server & npm run seed",
+    "demo-seed": "node demo/demoseed.js",
+    "demo-server": "nodemon demo/demoserver.js",
+    "demo-start-seed": "npm run demo-server & npm run demo-seed"
   },
   "author": "\"esyeng, mcherry\"",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "5.0.0",
     "chalk": "4.1.0",
     "crypto": "1.0.1",
     "express": "4.17.1",
     "express-session": "1.17.1",
     "faker": "5.1.0",
+    "jsonwebtoken": "8.5.1",
     "nodemon": "2.0.4",
     "passport": "0.4.1",
     "path": "0.12.7",
