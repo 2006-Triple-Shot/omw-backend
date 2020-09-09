@@ -13,6 +13,7 @@
     "demo-seed": "node demo/demoseed.js",
     "demo-server": "nodemon demo/demoserver.js",
     "demo-start-seed": "npm run demo-server & npm run demo-seed",
+    "start-demo": "node demo/demoserver.js",
     "deploy": "production/script/deploy"
   },
   "author": "\"esyeng, mcherry\"",
