@@ -4,12 +4,9 @@ const auth = require("express").Router();
 const { demoUser } = require("../models/demoModIndex");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-let omwApiToken;
-if (process.env.NODE_ENV === "production") {
-  let omwApiToken = process.env.TOKENKEY;
-} else {
-  let omwApiToken = require("../../token");
-}
+const secret = require("../../publicsecret");
+// const omwApiToken = require("../../token");
+
 module.exports = auth;
 
 /* LOGIN ************************** */
@@ -24,7 +21,9 @@ auth.post("/login", async (req, res, next) => {
     } else if (user) {
       const passwordCorrect = user.correctPassword(password);
       if (passwordCorrect) {
-        const token = jwt.sign(user.email, omwApiToken, { expiresIn: "1d" });
+        const token = jwt.sign(user.email, secret.publicSecret, {
+          expiresIn: "1d",
+        });
         return res.json({ token: token });
       } else {
         console.log("Incorrect password for user:", req.body.email);

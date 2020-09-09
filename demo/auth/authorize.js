@@ -1,10 +1,7 @@
 const jwt = require("jsonwebtoken");
-let omwApiToken;
-if (process.env.NODE_ENV === "production") {
-  omwApiToken = process.env.TOKENKEY;
-} else {
-  omwApiToken = require("../../token");
-}
+const secret = require("../../publicsecret");
+// const omwApiToken = require("../../token");
+
 module.exports = (req, res, next) => {
   const authHeader = req.get("Authorization");
   if (!authHeader) {
@@ -12,7 +9,7 @@ module.exports = (req, res, next) => {
   }
   try {
     const token = authHeader;
-    jwt.verify(token, omwApiToken);
+    jwt.verify(token, secret.publicSecret);
     next();
   } catch (err) {
     return res.status().json(err);

@@ -3,12 +3,8 @@ const auth = require("express").Router();
 const { User } = require("../../db/models/index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-let omwApiToken;
-if (process.env.NODE_ENV === "production") {
-  omwApiToken = process.env.TOKENKEY;
-} else {
-  omwApiToken = require("../../token");
-}
+const secret = require("../../publicsecret");
+// const omwApiToken = require("../../token");
 
 module.exports = auth;
 
@@ -24,7 +20,9 @@ auth.post("/login", async (req, res, next) => {
     } else if (user) {
       const passwordCorrect = user.correctPassword(password);
       if (passwordCorrect) {
-        const token = jwt.sign(user.email, omwApiToken, { expiresIn: "1d" });
+        const token = jwt.sign(user.email, secret.publicSecret, {
+          expiresIn: "1d",
+        });
         return res.json({ token: token });
       } else {
         console.log("Incorrect password for user:", req.body.email);
