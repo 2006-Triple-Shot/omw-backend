@@ -19,14 +19,12 @@ auth.post("/login", async (req, res, next) => {
     } else if (user) {
       const passwordCorrect = user.correctPassword(password);
       if (passwordCorrect) {
-        const token = jwt.sign(user.email, omwApiToken);
+        const token = jwt.sign(user.email, omwApiToken, { expiresIn: "1d" });
         return res.json({ token: token });
       } else {
         console.log("Incorrect password for user:", req.body.email);
         res.status(401).send("incorrect password");
       }
-    } else {
-      // req.login(user, (err) => (err ? next(err) : res.json(user)));
     }
   } catch (err) {
     next(err);
@@ -48,18 +46,22 @@ auth.post("/signup", async (req, res, next) => {
     } = req.body;
 
     const newUser = await demoUser.create({
-      firstName,
-      lastName,
-      email,
-      password,
+      firstName: firstName,
+      lastName: lastName,
+      latitude: latitude,
+      longitude: longitude,
+      mobile: mobile,
+      password: password,
+      zip: zip,
+      email: email,
     });
 
     const { id } = newUser;
     const newUserDetails = {
-      firstName,
-      lastName,
-      email,
-      id,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      id: id,
     };
     res.json(newUserDetails);
   } catch (err) {
@@ -72,11 +74,6 @@ auth.post("/signup", async (req, res, next) => {
 });
 
 /* LOGOUT ************************** */
-auth.post("/logout", (req, res) => {
-  req.logout();
-  req.session.destroy();
-  res.redirect("/");
-});
 
 /* GET ME IF LOGGED IN ************************** */
 auth.get("/me", (req, res) => {

@@ -3,7 +3,6 @@ const pg = require("pg");
 const Sequelize = require("sequelize");
 const ddb = require("./ddb");
 const { demoUser, demoEvent } = require("./models/demoModIndex");
-const setAndSaltPassword = require("./models/demoUser");
 
 const users = [
   {

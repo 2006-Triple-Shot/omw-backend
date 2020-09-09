@@ -1,12 +1,28 @@
-const app = require("./api/index");
-const models = require("./db/models");
-const { User, Event } = models;
-const db = require("./db/db");
+const express = require("express");
+const app = express();
+const path = require("path");
+const morgan = require("morgan");
 const http = require("http");
 const server = http.createServer(app);
+const authorize = require("./auth/authorize");
 const io = require("socket.io").listen(server);
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
+module.exports = app;
+
+/* MIDDLEWARES ****************** */
+app.use(morgan("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+/* AUTHENTICATION MIDDLEWARE ****************** */
+app.use("/auth", require("./auth/auth"));
+app.use("*", authorize);
+
+/* ROUTES ****************** */
+app.use("/api", require("./api/demoapi")); // include our routes!
+
+/* SOCKETS ****************** */
 let guestSocket = null;
 let hostSocket = null;
 let count = 0;
@@ -56,6 +72,24 @@ io.on("connection", (socket) => {
   });
 });
 
+/* ERROR HANDLING ****************** */
+
+app.use((req, res, next) => {
+  if (path.extname(req.path).length) {
+    const err = new Error("Not found");
+    err.status = 404;
+    next(err);
+  } else {
+    next();
+  }
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  console.error(err.stack);
+  res.status(err.status || 500).send(err.message || "Internal server error.");
+});
+
 server.listen(PORT, () => {
-  console.log("server started and listening on port " + PORT);
+  console.log("demo server listening on port " + PORT);
 });

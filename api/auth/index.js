@@ -4,6 +4,7 @@ const { User } = require("../../db/models/index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const omwApiToken = require("../../token");
+const { TIME } = require("sequelize/types");
 module.exports = auth;
 
 /* LOGIN ************************** */
@@ -14,18 +15,16 @@ auth.post("/login", async (req, res, next) => {
     const user = await User.findOne({ where: { email: email } });
     if (!user) {
       console.log("No such user found:", req.body.email);
-      res.status(401).send("Wrong username and/or password");
+      res.status(401).send("Wrong email and/or password");
     } else if (user) {
-      const checkPassword = await bcrypt.compare(password, user.password);
-      if (checkPassword) {
-        const token = jwt.sign(user.email, omwApiToken);
-        return res.json(token);
+      const passwordCorrect = user.correctPassword(password);
+      if (passwordCorrect) {
+        const token = jwt.sign(user.email, omwApiToken, { expiresIn: "1d" });
+        return res.json({ token: token });
       } else {
         console.log("Incorrect password for user:", req.body.email);
-        res.status(401).send("Wrong username and/or password");
+        res.status(401).send("incorrect password");
       }
-    } else {
-      // req.login(user, (err) => (err ? next(err) : res.json(user)));
     }
   } catch (err) {
     next(err);
@@ -45,14 +44,14 @@ auth.post("/signup", async (req, res, next) => {
       latitude,
       longitude,
     } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 12);
+
     const newUser = await User.create({
       firstName: firstName,
       lastName: lastName,
       latitude: latitude,
       longitude: longitude,
       mobile: mobile,
-      password: hashedPassword,
+      password: password,
       zip: zip,
       email: email,
     });
@@ -75,11 +74,6 @@ auth.post("/signup", async (req, res, next) => {
 });
 
 /* LOGOUT ************************** */
-auth.post("/logout", (req, res) => {
-  req.logout();
-  req.session.destroy();
-  res.redirect("/");
-});
 
 /* GET ME IF LOGGED IN ************************** */
 auth.get("/me", (req, res) => {

@@ -6,6 +6,11 @@ module.exports = (req, res, next) => {
   if (!authHeader) {
     return res.status(401).json({ error: "Missing authorization header" });
   }
-  const token = authHeader;
-  jwt.verify(token, omwApiToken);
+  try {
+    const token = authHeader;
+    jwt.verify(token, omwApiToken);
+    next();
+  } catch (err) {
+    return res.status().json(err);
+  }
 };
