@@ -76,6 +76,8 @@ const launchDay = {
   status: "Inactive",
 };
 
+// couple more events ASSOCIATE WITH HOST
+
 const seed = async () => {
   try {
     await ddb.sync({ force: true });

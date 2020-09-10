@@ -8,8 +8,6 @@ User.belongsToMany(Event, { through: "trips", as: "event" });
 
 User.belongsToMany(User, { through: "contacts", as: "contact" });
 
-// User.hasMany(Event, { foreignKey: "eventId" });
-
 module.exports = {
   User,
   Event,

@@ -14,14 +14,19 @@ auth.post("/login", async (req, res, next) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ where: { email: email } });
+
     if (!user) {
       console.log("No such user found:", req.body.email);
+
       res.status(401).send("Wrong email and/or password");
     } else if (user) {
       const passwordCorrect = user.correctPassword(password);
+
       if (passwordCorrect) {
         console.log(secret.publicSecret);
+
         const token = jwt.sign(user.email, secret.publicSecret);
+
         return res.json({ token: token });
       } else {
         console.log("Incorrect password for user:", req.body.email);

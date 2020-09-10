@@ -69,7 +69,7 @@ users.get("/:param", async (req, res, next) => {
           if (userByEmail) {
             user = userByEmail;
             id = user.dataValues.id;
-            res.status(200).json({ userId: id });
+            res.status(200).json(user);
           }
         }
       } catch (err) {

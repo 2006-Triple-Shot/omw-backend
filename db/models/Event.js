@@ -9,7 +9,6 @@ const Event = db.define("events", {
   longitude: {
     type: Sequelize.FLOAT,
   },
-
   date: {
     type: Sequelize.DATEONLY,
     allowNull: false,

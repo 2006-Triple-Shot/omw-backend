@@ -4,6 +4,8 @@ const Sequelize = require("sequelize");
 const { User, Event } = require("./models");
 const faker = require("faker");
 
+// MUST ASSOCIATE CONTACTS ***
+
 const createUser = () => {
   const user = {
     firstName: faker.name.firstName(),

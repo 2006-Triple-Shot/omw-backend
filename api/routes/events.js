@@ -11,17 +11,17 @@ events.get("/testget", async (req, res, next) => {
   }
 });
 
-/* GET ALL EVENTS ************************** */
+/* GET ALL * MY HOSTED ? GUESTED ?? * EVENTS ************************** */
 events.get("/", async (req, res, next) => {
   try {
-    const allEvents = await Event.findAll();
-    res.json(allEvents);
+    const allEvents = await Event.findAll(); // Include hosted and attending/invited to as guest through TRIPS
+    res.json(allEvents); // SEE LIST OF GUESTS
   } catch (err) {
     next(err);
   }
 });
 
-/* GET HOST'S EVENTS ************************** */
+/* GET SINGLE EVENTS ************************** */
 events.get("/:eventId", async (req, res, next) => {
   try {
     const event = await Event.findByPk(req.params.eventId, {
@@ -42,8 +42,9 @@ events.get("/:eventId", async (req, res, next) => {
 /* POST EVENT ************************** */
 events.post("/", async (req, res, next) => {
   try {
-    const { latitude, longitude, date, title, description } = req.body;
+    const { latitude, longitude, date, title, description } = req.body; // append User through hostId
     const newEvent = await Event.create({
+      // INCLUDE IDS of guests, create TRIPS instances
       title: title,
       date: date,
       latitude: latitude,
