@@ -5,25 +5,21 @@ const userEvents = require("./userEvents");
 /* ASSOCIATIONS ************* */
 // demoUser.hasMany(demoEvent, { foreignKey: "hostId" }); // demoEvent should have demoUser as host
 
-// demoEvent.belongsToMany(demoUser, { through: "trips", as: "guest", foreignKey: "guestId" });
+demoUser.hasMany(demoEvent, { foreignKey: "hostId" }); // demoEvent should have demoUser as host
+demoEvent.belongsToMany(demoUser, { through: "trips", as: "guest" });
+demoUser.belongsToMany(demoEvent, { through: "trips", as: "event" });
+
+demoUser.belongsToMany(demoUser, { through: "contacts", as: "contact" });
 // demoUser.belongsToMany(demoEvent, {
-//   through: "trips",
-//   as: "event",
-//   foreignKey: "guestId",
+//   as: "Guests",
+//   through: { model: userEvents, unique: false },
+//   foreignKey: "host_id",
 // });
-
-// demoUser.belongsToMany(demoUser, { through: "contacts", as: "contact", foreignKey: "KEY" });
-
-demoUser.belongsToMany(demoEvent, {
-  as: "Guests",
-  through: { model: userEvents, unique: false },
-  foreignKey: "host_id",
-});
-demoEvent.belongsToMany(demoUser, {
-  as: "Hosts",
-  through: { model: userEvents, unique: false },
-  foreignKey: "guest_id",
-});
+// demoEvent.belongsToMany(demoUser, {
+//   as: "Hosts",
+//   through: { model: userEvents, unique: false },
+//   foreignKey: "guest_id",
+// });
 
 
 module.exports = {
