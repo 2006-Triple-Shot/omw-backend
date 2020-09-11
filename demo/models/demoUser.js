@@ -55,7 +55,7 @@ const demoUser = db.define("users", {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
-  isGuest: {
+  isSharing: {
     type: Sequelize.BOOLEAN,
     defaultValue: true,
   },
