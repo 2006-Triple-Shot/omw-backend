@@ -105,7 +105,7 @@ const seed = async () => {
     await ddb.sync({ force: true });
     console.log("demo db synced");
     const friends = users.map(async (user) => {
-      const newUser = await demoUser.create(user);
+      const newUseer = await demoUser.create(user);
     });
     const eventArr = events.map(async (event) => {
       const newEvent = await demoEvent.create(event);
