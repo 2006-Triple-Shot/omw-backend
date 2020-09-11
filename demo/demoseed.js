@@ -2,9 +2,23 @@
 const pg = require("pg");
 const Sequelize = require("sequelize");
 const ddb = require("./ddb");
-const { demoUser, demoEvent, userEvents } = require("./models/demoModIndex");
+const { demoUser, demoEvent } = require("./models/demoModIndex");
 // const faker = require("faker");
 const users = [
+  {
+    id: 5,
+    lastName: "test",
+    firstName: "test",
+    zip: "56494-3996",
+    mobile: "1-838-380-0904 x840",
+    longitude: 128.3922,
+    latitude: 76.971199999999996,
+    imageUrl: "https://s3.amazonaws.com/uifaces/faces/twitter/bboy1895/128.jpg",
+    password: "test",
+    isHost: true,
+    email: "test@gmail.com",
+    // eventId: 1
+  },
   {
     id: 4,
     lastName: "Wiegand",
@@ -74,7 +88,7 @@ const events = [
     title: "Launch Day",
     description: "A big day for networking",
     status: "Inactive",
-    // userId: 1
+    hostId: 1,
   },
   {
     latitude: 40.703286,
@@ -84,7 +98,7 @@ const events = [
     title: "Graduation Party",
     description: "Come celebrate our Fullstack Graduation!",
     status: "Inactive",
-    // userId: 1
+    hostId: 1,
   },
   {
     latitude: 40.703286,
@@ -92,9 +106,19 @@ const events = [
     date: "2020-09-17",
     time: "08:00:00",
     title: "Bring your Cody to work day",
-    description: "",
+    description: "Everyone has a pug to share",
     status: "Inactive",
-    // userId: 1
+    hostId: 1,
+  },
+  {
+    latitude: 40.703286,
+    longitude: -73.009233,
+    date: "2020-09-17",
+    time: "08:00:00",
+    title: "The Apocalypse",
+    description: "The end is nigh! Bring your friends!",
+    status: "Inactive",
+    hostId: 1,
   },
 ];
 
@@ -104,20 +128,32 @@ const seed = async () => {
   try {
     await ddb.sync({ force: true });
     console.log("demo db synced");
-    const friends = users.map(async (user) => {
-      const newUseer = await demoUser.create(user);
-    });
-    const eventArr = events.map(async (event) => {
+
+    const friends = await Promise.all(
+      users.map(async user => {
+        const newUser = await demoUser.create(user);
+        const toAdd = await demoUser.findByPk(2)
+        const friend = await newUser.addContact(toAdd);
+      })
+    );
+
+    const eventArr = await Promise.all(events.map(async (event) => {
       const newEvent = await demoEvent.create(event);
-    })
+      // console.log("Just created event");
+      const user = await demoUser.findByPk(1);
+      // console.log("Try to add person");
 
-    const associateUsersWithEvents = await demoUser.findAll({
-      where: {
-        isHost: true,
-      },
-    });
+      const addUs = await newEvent.addGuest(user);
+    }))
 
-    console.log(associateUsersWithEvents);
+
+    // const associateUsersWithEvents = await demoUser.findAll({
+    //   where: {
+    //     isHost: true,
+    //   },
+    // });
+
+    // console.log(associateUsersWithEvents);
 
     console.log(`seeded friends for launch day`);
     console.log(`seeded successfully`);
