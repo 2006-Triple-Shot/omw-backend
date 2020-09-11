@@ -2,8 +2,8 @@
 const pg = require("pg");
 const Sequelize = require("sequelize");
 const ddb = require("./ddb");
-const { demoUser, demoEvent } = require("./models/demoModIndex");
-
+const { demoUser, demoEvent, userEvents } = require("./models/demoModIndex");
+// const faker = require("faker");
 const users = [
   {
     id: 4,
@@ -15,9 +15,9 @@ const users = [
     latitude: 76.971199999999996,
     imageUrl: "https://s3.amazonaws.com/uifaces/faces/twitter/bboy1895/128.jpg",
     password: "guest4",
-    isHost: false,
-    isSharing: false,
+    isHost: true,
     email: "Janice84@hotmail.com",
+    // eventId: 1
   },
   {
     id: 3,
@@ -31,8 +31,8 @@ const users = [
       "https://s3.amazonaws.com/uifaces/faces/twitter/bpartridge/128.jpg",
     password: "guest3",
     isHost: false,
-    isSharing: false,
     email: "Henriette_Toy@yahoo.com",
+    // eventId: 1
   },
   {
     id: 2,
@@ -44,13 +44,12 @@ const users = [
     latitude: -59.294199999999996,
     imageUrl: "https://s3.amazonaws.com/uifaces/faces/twitter/macxim/128.jpg",
     password: "guest2",
-    isHost: false,
-    isSharing: false,
+    isHost: true,
     email: "Raquel97@yahoo.com",
+    // eventId: 2
   },
   {
     id: 1,
-
     lastName: "Dickens",
     firstName: "Justina",
     zip: "68530",
@@ -61,20 +60,43 @@ const users = [
       "https://s3.amazonaws.com/uifaces/faces/twitter/lonesomelemon/128.jpg",
     password: "guest1",
     isHost: true,
-    isSharing: false,
     email: "Nayeli_Herzog42@yahoo.com",
+    // eventId: 2
   },
 ];
 
-const launchDay = {
-  latitude: 40.705286,
-  longitude: -74.009233,
-  date: "2020-09-17",
-  time: "08:00:00",
-  title: "Launch Day",
-  description: "A big day for networking",
-  status: "Inactive",
-};
+const events = [
+  {
+    latitude: 40.705286,
+    longitude: -74.009233,
+    date: "2020-09-17",
+    time: "08:00:00",
+    title: "Launch Day",
+    description: "A big day for networking",
+    status: "Inactive",
+    // userId: 1
+  },
+  {
+    latitude: 40.703286,
+    longitude: -73.009233,
+    date: "2020-09-17",
+    time: "08:00:00",
+    title: "Graduation Party",
+    description: "Come celebrate our Fullstack Graduation!",
+    status: "Inactive",
+    // userId: 1
+  },
+  {
+    latitude: 40.703286,
+    longitude: -73.009233,
+    date: "2020-09-17",
+    time: "08:00:00",
+    title: "Bring your Cody to work day",
+    description: "",
+    status: "Inactive",
+    // userId: 1
+  },
+];
 
 // couple more events ASSOCIATE WITH HOST
 
@@ -85,7 +107,17 @@ const seed = async () => {
     const friends = users.map(async (user) => {
       const newUser = await demoUser.create(user);
     });
-    const event = await demoEvent.create(launchDay);
+    const eventArr = events.map(async (event) => {
+      const newEvent = await demoEvent.create(event);
+    })
+
+    const associateUsersWithEvents = await demoUser.findAll({
+      where: {
+        isHost: true,
+      },
+    });
+
+    console.log(associateUsersWithEvents);
 
     console.log(`seeded friends for launch day`);
     console.log(`seeded successfully`);

@@ -55,11 +55,12 @@ const demoUser = db.define("users", {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
-  isSharing: {
+  isGuest: {
     type: Sequelize.BOOLEAN,
-    defaultValue: false,
+    defaultValue: true,
   },
 });
+
 
 module.exports = demoUser;
 

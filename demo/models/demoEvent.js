@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 const ddb = require("../ddb");
 
+
 const demoEvent = ddb.define("event", {
   latitude: {
     type: Sequelize.FLOAT,
@@ -8,7 +9,6 @@ const demoEvent = ddb.define("event", {
   longitude: {
     type: Sequelize.FLOAT,
   },
-
   date: {
     type: Sequelize.DATEONLY,
     allowNull: false,
@@ -23,6 +23,9 @@ const demoEvent = ddb.define("event", {
   description: {
     type: Sequelize.TEXT,
   },
+
 });
+
+
 
 module.exports = demoEvent;

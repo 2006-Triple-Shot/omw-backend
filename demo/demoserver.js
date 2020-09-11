@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 8080;
 
 module.exports = app;
 
-if (process.env.NODE_ENV !== "production") require("./token");
+// if (process.env.NODE_ENV !== "production") require("./token");
 
 /* MIDDLEWARES ****************** */
 app.use(morgan("dev"));
