@@ -12,16 +12,7 @@ demoUser.belongsToMany(demoEvent, { through: "trips", as: "event" });
 
 demoUser.belongsToMany(demoUser, { through: "contacts", as: "contact" });
 
-// demoUser.belongsToMany(demoEvent, {
-//   as: "Guests",
-//   through: { model: userEvents, unique: false },
-//   foreignKey: "host_id",
-// });
-// demoEvent.belongsToMany(demoUser, {
-//   as: "Hosts",
-//   through: { model: userEvents, unique: false },
-//   foreignKey: "guest_id",
-// });
+
 
 
 module.exports = {
