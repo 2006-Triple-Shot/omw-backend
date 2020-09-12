@@ -3,7 +3,7 @@
 const router = require("express").Router();
 
 router.use("/users", require("./routes/demousers"));
-// router.use("/events", require("./routes/demoevents"));
+router.use("/events", require("./routes/demoevents"));
 
 router.use((req, res, next) => {
   const err = new Error("API route not found!");
