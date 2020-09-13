@@ -5,7 +5,7 @@ const { demoUser } = require("../models/demoModIndex");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const secret = require("../../publicsecret");
-// const omwApiToken = require("../../token");
+const omwApiToken = require("../../token");
 
 module.exports = auth;
 
@@ -21,8 +21,8 @@ auth.post("/login", async (req, res, next) => {
     } else if (user) {
       const passwordCorrect = user.correctPassword(password);
       if (passwordCorrect) {
-        console.log(secret.publicSecret);
-        const token = jwt.sign(user.email, secret.publicSecret);
+        console.log(omwApiToken);
+        const token = jwt.sign(user.email, omwApiToken);
         return res.json({ token: token });
       } else {
         console.log("Incorrect password for user:", req.body.email);
@@ -46,6 +46,7 @@ auth.post("/signup", async (req, res, next) => {
       zip,
       latitude,
       longitude,
+      pending
     } = req.body;
 
     const newUser = await demoUser.create({
@@ -57,6 +58,7 @@ auth.post("/signup", async (req, res, next) => {
       password: password,
       zip: zip,
       email: email,
+      pending: pending
     });
 
     const { id } = newUser;

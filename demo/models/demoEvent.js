@@ -11,7 +11,7 @@ const demoEvent = ddb.define("event", {
   },
   date: {
     type: Sequelize.DATEONLY,
-    allowNull: false,
+    defaultValue: new Date()
   },
   time: {
     type: Sequelize.TIME,
