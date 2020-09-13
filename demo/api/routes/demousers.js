@@ -173,7 +173,7 @@ users.get("/id/:userId/contacts", async (req, res, next) => {
 /* REQUEST CONNECTION ************************** */
 users.put("/id/:userId/add", async (req, res, next) => {
   try {
-    const { email, contacts} = req.body; // append User through hostId
+    const { email, contacts } = req.body; // append User through hostId
     const user = await demoUser.findOne({
       where: {
         email: email
