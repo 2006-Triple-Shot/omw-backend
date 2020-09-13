@@ -46,6 +46,7 @@ auth.post("/signup", async (req, res, next) => {
       zip,
       latitude,
       longitude,
+      pending
     } = req.body;
 
     const newUser = await demoUser.create({
@@ -57,6 +58,7 @@ auth.post("/signup", async (req, res, next) => {
       password: password,
       zip: zip,
       email: email,
+      pending: pending
     });
 
     const { id } = newUser;

@@ -1,19 +1,11 @@
 const users = require("express").Router();
-const { demoUser, demoEvent } = require("../../models/demoModIndex");
+const { demoUser, demoEvent, Contact } = require("../../models/demoModIndex");
 const ddb = require("../../ddb");
 
-// const { User, Event } = require("../../db/models/index");
-// const db = require("../../db/db");
 
-/* TEST GET USERS ************************** */
-users.get("/test/events", async (req, res, next) => {
-  try {
-    const event = await demoEvent.findAll();
-    res.status(200).json(event);
-  } catch (err) {
-    next(err);
-  }
-});
+/* ************************************** */
+/* USER ROUTES ************************** */
+/* ************************************** */
 
 /* GET ALL USERS ************************** */
 users.get("/", async (req, res, next) => {
@@ -92,52 +84,122 @@ users.get("/:param", async (req, res, next) => {
   }
 });
 
-/* GET CONTACTS ************************** */
+
+/* ************************************** */
+/* CONTACT ROUTES ************************** */
+/* ************************************** */
+
+
+
+/* GET MY CONTACTS ************************** */
+users.get("/id/:userId/contacts", async (req, res, next) => {
+  try {
+    const user = await demoUser.findAll({
+      include: [
+        {
+          model: demoUser,
+          as: "contact",
+          through: { attributes: [] }, //  <== Here
+          required: true,
+        },
+      ],
+    });
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// /* GET CONTACTS ************************** */
 // users.get("/id/:userId/contacts", async (req, res, next) => {
 //   try {
-//     const user = await User.findAll({
-//       include: {
-//         model: User,
-//         through: "contacts",
-//         as: "contact",
+//     const {requestedContacts, currentUserId} = req.body;
+
+//     const userRequesting = await demoUser.findByPk(currentUserId);
+//     const reqId = userRequesting.id;
+
+//     const contactList = await Promise.all(requestedContacts.map(async (contact) => {
+//       const contactId = contact.id
+//       const connection = await demoUser.findOne({
 //         where: {
-//           contactId: req.params.userId,
+//           id: reqId,
 //         },
-//       },
-//     });
-//     res.json(user);
+//         include: [
+//           {
+//             model: demoUser,
+//             as: "contact",
+//             attributes: [
+//               "id",
+//               "firstName",
+//               "lastName",
+//               "email",
+//               "latitude",
+//               "longitude",
+//             ],
+
+//             through: "contacts", //  <== Here
+
+//           },
+//         ],
+//       });
+
+//     }))
+//     res.status(200).json({contacts: contactList})
 //   } catch (err) {
 //     next(err);
 //   }
 // });
 
-/* CREATE USER ************************** */
-users.post("/", async (req, res, next) => {
+/* REQUEST CONNECTION ************************** */
+users.post("/id/:userId/request", async (req, res, next) => {
   try {
-    const {
-      firstName,
-      lastName,
-      mobile,
-      email,
-      password,
-      zip,
-      latitude,
-      longitude,
-    } = req.body;
-    const newUser = await demoUser.create({
-      firstName: firstName,
-      lastName: lastName,
-      latitude: latitude,
-      longitude: longitude,
-      mobile: mobile,
-      password: password,
-      zip: zip,
-      email: email,
-    });
-    res.json(newUser);
+    const { requestedId, currentUserId } = req.body;
+
+    const userRequesting = await demoUser.findByPk(currentUserId);
+    const userReceiving = await demoUser.findByPk(requestedId)
+    const join = async () => {
+      await userRequesting.addContact(userReceiving);
+      await userReceiving.addContact(userRequesting);
+    };
+    const connectionRequest = await join();
+    res.status(201).json({msg: "request sent", user: userReceiving});
   } catch (err) {
     next(err);
   }
 });
+
+/* RECEIVE CONNECTION ************************** */
+users.put("/id/:userId/contreq", async (req, res, next) => {
+  try {
+    const { id } = req.params.userId;
+    const { status, requestingId } = req.body;
+    const userReceiving = await demoUser.findByPk(id);
+    const userRequesting = await demoUser.findByPk(requestingId);
+    const connection = await Contact.findOne({
+      where: {
+        userId: userReceiving.id,
+        contactId: userRequesting.id
+      }
+    })
+    if (status === "accepted") {
+      const complete = connection.update({
+        accepted: true
+      })
+      res.status(201).json({ msg: "request accepted", user: userReceiving });
+    } else if (status === "denied") {
+        const complete = await connection.update({
+          accepted: false
+        })
+        const remove = await connection.destroy()
+        res.status(303).json({ msg: "request denied" });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+
+
 
 module.exports = users;
