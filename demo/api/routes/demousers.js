@@ -92,7 +92,7 @@ users.get("/:param", async (req, res, next) => {
 
 
 /* GET MY CONTACTS ************************** */
-users.get("/id/:userId/contacts", async (req, res, next) => {
+users.get("/id/contacts", async (req, res, next) => {
   try {
     const {email} = req.body;
     const user = await demoUser.findOne({
