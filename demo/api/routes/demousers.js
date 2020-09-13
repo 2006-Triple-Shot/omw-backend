@@ -1,5 +1,5 @@
 const users = require("express").Router();
-const { demoUser, demoEvent, Contact } = require("../../models/demoModIndex");
+const { demoUser } = require("../../models/demoModIndex");
 const ddb = require("../../ddb");
 
 
@@ -94,11 +94,31 @@ users.get("/:param", async (req, res, next) => {
 /* GET MY CONTACTS ************************** */
 users.get("/id/:userId/contacts", async (req, res, next) => {
   try {
-    const user = await demoUser.findAll({
+    const {email} = req.body;
+    const user = await demoUser.findOne({
+      where: {
+        email: email,
+      },
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "latitude",
+        "longitude",
+      ],
       include: [
         {
           model: demoUser,
           as: "contact",
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "email",
+            "latitude",
+            "longitude",
+          ],
           through: { attributes: [] }, //  <== Here
           required: true,
         },
@@ -151,18 +171,52 @@ users.get("/id/:userId/contacts", async (req, res, next) => {
 // });
 
 /* REQUEST CONNECTION ************************** */
-users.post("/id/:userId/request", async (req, res, next) => {
+users.put("/id/:userId/add", async (req, res, next) => {
   try {
-    const { requestedId, currentUserId } = req.body;
+    const { email, contacts} = req.body; // append User through hostId
+    const user = await demoUser.findOne({
+      where: {
+        email: email
+      }
+    })
+    const addFriends = await Promise.all(
+      contacts.map(async contact => {
+        const contactToAdd = await demoUser.findByPk(contact.id);
+        const add = await user.addContact(contactToAdd);
+        console.log(add);
+      })
+    );
 
-    const userRequesting = await demoUser.findByPk(currentUserId);
-    const userReceiving = await demoUser.findByPk(requestedId)
-    const join = async () => {
-      await userRequesting.addContact(userReceiving);
-      await userReceiving.addContact(userRequesting);
-    };
-    const connectionRequest = await join();
-    res.status(201).json({msg: "request sent", user: userReceiving});
+    const updatedUser = await demoUser.findOne({
+      where: {
+        email: email,
+      },
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "latitude",
+        "longitude",
+      ],
+      include: [
+        {
+          model: demoUser,
+          as: "contact",
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "email",
+            "latitude",
+            "longitude",
+          ],
+          through: { attributes: [] }, //  <== Here
+          required: true,
+        },
+      ],
+    });
+    res.json(updatedUser);
   } catch (err) {
     next(err);
   }
